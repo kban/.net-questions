@@ -125,3 +125,83 @@ var o = {
     }
 }
 ```
+
+## 4. Implement simple Promise-like function on javascript.
+```
+function Defer() {
+  this.callbacks = [];
+  this.status = 'pending';
+
+  this.pauseDef = null;
+}
+
+Defer.prototype.then = function(callback) {
+  this.callbacks.push(callback);
+  return this;
+}
+
+Defer.prototype.resolve = function(val) {
+  this.status = 'executing';
+  
+  let exec = function(res, cur) {
+    if (this.status == 'paused') {
+      this.pauseDef = this.pauseDef || new Defer();
+      if (res instanceof Defer) {
+        return this.pauseDef.then(() => {
+          res.then(cur);
+        });
+      } else {
+        return this.pauseDef.then(() => {
+          cur(res)
+        });
+      }
+    } else {
+      if (res instanceof Defer) {
+        return res.then(cur);
+      } else {
+        return cur(res);
+      }
+    }
+  }
+
+setTimeout(() => { this.callbacks.reduce((res, cur) => {
+    return exec(res, cur);
+  }, val);},1)
+ 
+}
+
+Defer.prototype.pause = function() {
+  if (this.status != 'executing') return;
+  this.status = 'paused';
+}
+
+Defer.prototype.continue = function() {
+ if(!this.pauseDef) return;
+ 
+ this.status = 'executing';
+ 
+ this.pauseDef.resolve();
+}
+
+
+var def = new Defer();
+def.then((res) => {
+    let d1 = new Defer();
+    setTimeout(() => {
+      d1.resolve(res + 'bbb');
+    }, 12000);
+
+    return d1;
+  })
+  .then((res) => {
+    return res + 'final test';
+  })
+  .then((res) => {
+    console.log('result', res)
+  })
+
+def.resolve('aaa')
+def.pause();
+
+setTimeout(() => {def.continue()},20000)
+```

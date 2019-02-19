@@ -173,3 +173,75 @@ namespace Basic.Tests.Quiz
     }
 }
 ```
+
+## 3. What's wrong with the code and how to fix it.
+```
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+
+namespace TestEf
+{
+
+    public class ArticleEntity
+    {
+        public int Id { get; set; }
+        public string Header { get; set; }
+        public DateTime Published { get; set; }
+
+        public virtual ICollection<TagEntity> Tags { get; set; }
+    }
+
+    public class TagEntity
+    {
+        public int Id { get; set; }
+        public string Tag { get; set; }
+        public virtual ICollection<ArticleEntity> Articles { get; set; }
+    }
+
+    public class MediaNewsContext : DbContext
+    {
+        public DbSet<ArticleEntity> Articles { get; set; }
+        public DbSet<TagEntity> Tags { get; set; }
+
+        public MediaNewsContext(string conn) : base(conn)
+        {
+
+        }
+    }
+
+}
+
+using System.Collections.Generic;
+using System.Linq;
+
+namespace TestEf
+{
+    public interface INewsGetter
+    {
+        IEnumerable<ArticleEntity> GetTop10(string tag, int month, int year);
+        IQuerable<ArticleEntity> GetByTag(string tag);
+    }
+
+    public class NewsGetter : INewsGetter
+    {
+        private static MediaNewsContext _dbContext;
+        public NewsGetter(string conn)
+        {
+            _dbContext = new MediaNewsContext(conn);
+        }
+
+        public IEnumerable<ArticleEntity> GetTop10(string tag, int month, int year)
+        {
+            return GetByTag(tag)
+              .Where(x => x.Published.Month == month && x.Published.Year == year)
+              .Take(10);
+        }
+
+        public IQuerable<ArticleEntity> GetByTag(string tagName)
+        {
+            return _dbContext.Tags.FirstOrDefault(t => t.Tag == tagName).Articles;
+        }
+    }
+}
+```

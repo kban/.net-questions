@@ -136,7 +136,7 @@ namespace Basic.Tests.Quiz
 }
 ```
 
-### What's the result and why?
+## 2. What's the result and why?
 ```
 using System;
 using System.Collections.Generic;

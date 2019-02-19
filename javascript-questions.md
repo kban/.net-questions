@@ -29,7 +29,8 @@ var check = (string) => {
 check('[<[[[[test>]')
 ```
 
-5) Упростите функцию
+## 2. Simplify the function.
+
 function func(s, a, b) {
   var match_empty = /^$/;
   if (s.match(match_empty)) 
@@ -70,8 +71,10 @@ function func(s, a, b) {
   }
 }
 
-Решение: 
+### Solution.
+This function returns max value between last index of 'a' symbol and 'b' symbol.
 
+```
 function func(s, a, b) 
 {
 	if(!s)
@@ -79,31 +82,46 @@ function func(s, a, b)
   
   return Math.max(a && a.length == 1 ? s.lastIndexOf(a) : -1, b && b.length == 1 ? s.lastIndexOf(b) : -1);
 }
+```
 
+## 3. What will be on the screen. What's wrong with the function and how to fix it.
 
-console.log(func(null,'d','sa'))
-
-6) что будет выведено на экран? что не так с кодом и как решить
+```
 var o = {
     x: 10,
     foo: function() {
         for (var i = 0; i < 10; ++i){
             setTimeout(function() {
                 console.log(this.x + i);
-            }, 0);
+            }, 10);
         }
     }
+```
+### Result:
+Result: 20 times 'undefined'
 
-Решение
-20 раз выведет 20
-
+### What's wrong:
+This is a task for closure understanding.
+```
 var o = {
     x: 10,
     foo: function() {
-        for (let i = 0; i < 10; ++i){
-            setTimeout(() => console.log(this.x + i), 0);
+        for (var i = 0; i < 10; ++i){
+            setTimeout(function() {
+                console.log(this.x + i); //// 'this' is not defined int this scope. Also when this method is performed 'for' is already executed and i value is already 10;
+            }, 10);
+        }
+    }
+```
+
+### Fix:    
+```
+var o = {
+    x: 10,
+    foo: function() {
+        for (let i = 0; i < 10; ++i){ //// 'let' construction creates a variable for each step od 'for'
+            setTimeout(() => console.log(this.x + i), 0); //// ()=> construction doesn't have each own scode and uses the scope from the caller function, thus 'this' will be accessable here.
         }
     }
 }
-
-o.foo();
+```

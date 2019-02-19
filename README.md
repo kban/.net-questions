@@ -135,3 +135,41 @@ namespace Basic.Tests.Quiz
     }
 }
 ```
+
+### What's the result and why?
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Basic.Tests.Quiz
+{
+    public class UnitTest6
+    {
+        public void Test1()
+        {
+            foreach (var item in Get(2).ToArray())
+            {
+                Console.WriteLine(item); // **Result: 01 01 because .ToArray() will execute Get method and this will give 01 and then foreach will iterate thrue (0,1) and also give 01 **
+            }
+        }
+
+        public void Test11()
+        {
+            foreach (var item in Get(2))
+            {
+                Console.WriteLine(item); // **Result: 00 01 because foreach() will iterate thrue Get result and since it returns yield it will be iterated on each foreach() step (0,1) and also give 01 **
+            }
+        }
+
+        private static IEnumerable<int> Get(int count)
+        {
+            for (int index = 0; index < count; index++)
+            {
+                Console.WriteLine(index);
+                yield return index;
+            }
+        }
+    }
+}
+```

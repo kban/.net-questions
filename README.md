@@ -238,10 +238,24 @@ namespace TestEf
               .Take(10);
         }
 
-        public IQuerable<ArticleEntity> GetByTag(string tagName)
+        public IList<ArticleEntity> GetByTag(string tagName)
         {
-            return _dbContext.Tags.FirstOrDefault(t => t.Tag == tagName).Articles;
+            return _dbContext.Tags.FirstOrDefault(t => t.Tag == tagName).Articles.ToList();
         }
     }
+}
+```
+### What's wrong:
+```
+public IEnumerable<ArticleEntity> GetTop10(string tag, int month, int year)
+{
+     return GetByTag(tag)
+              .Where(x => x.Published.Month == month && x.Published.Year == year) //// ** This could cause problems because if for example there is a index for Published column, then this index will be useles for this query. Also it'll cause additional operations for splitting Published onto month and year**
+              .Take(10);
+}
+
+public IQuerable<ArticleEntity> GetByTag(string tagName) //// ** It's better to use IQuerable here because this method works with DB and IQuerable gives more flexibility for filtering.**
+{
+     return _dbContext.Tags.FirstOrDefault(t => t.Tag == tagName).Articles.ToList(); /// ** Logical issue: there could be multiple Tags with the same name in the DB. So we need to refactor this method to return all Articles for all Tags with entered tagName. Also we shouldn't use ToList here since we dicided to use IQuerable **
 }
 ```

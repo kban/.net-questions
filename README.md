@@ -254,8 +254,25 @@ public IEnumerable<ArticleEntity> GetTop10(string tag, int month, int year)
               .Take(10);
 }
 
-public IQuerable<ArticleEntity> GetByTag(string tagName) //// ** It's better to use IQuerable here because this method works with DB and IQuerable gives more flexibility for filtering.**
+public IList<ArticleEntity> GetByTag(string tagName) //// ** It's better to use IQuerable here because this method works with DB and IQuerable gives more flexibility for filtering.**
 {
      return _dbContext.Tags.FirstOrDefault(t => t.Tag == tagName).Articles.ToList(); /// ** Logical issue: there could be multiple Tags with the same name in the DB. So we need to refactor this method to return all Articles for all Tags with entered tagName. Also we shouldn't use ToList here since we dicided to use IQuerable **
+}
+```
+### Fix:
+```
+public IEnumerable<ArticleEntity> GetTop10(string tag, int month, int year)
+{
+     var endDate = new DateTime(year, 1, month + 1);     
+     var startDate = new DateTime(year, 1, month);
+     
+     return GetByTag(tag)
+              .Where(x => x.Published < endDate && x.Published >= startDate) 
+              .Take(10);
+}
+
+public IQuerable<ArticleEntity> GetByTag(string tagName)
+{
+     return _dbContext.Tags.Where(t => t.Tag == tagName).SelectMany(x => x.Articles);
 }
 ```

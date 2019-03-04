@@ -205,3 +205,24 @@ def.pause();
 
 setTimeout(() => {def.continue()},20000)
 ```
+
+## 5. Implement array.find() like it never exists in JS. Do not use strings methods.
+
+## 6. Implement factorial function in JS.
+
+## 7. Implement function which returns summ of 2 arguments like follows: f(2,3) == f(2)(3) == 5
+
+## 8. Implement a function which is executed after some timeout. The timeout should be reseted each time when the fuction is called.
+
+```
+var exe = function(time);
+exe();
+.../// nothing happens because timout didn't come
+exe();
+...
+///exe result after the timeout = time
+```
+
+
+
+

@@ -120,7 +120,7 @@ var o = {
     x: 10,
     foo: function() {
         for (let i = 0; i < 10; ++i){ //// 'let' construction creates a variable for each step od 'for'
-            setTimeout(() => console.log(this.x + i), 0); //// ()=> construction doesn't have each own scode and uses the scope from the caller function, thus 'this' will be accessable here.
+            setTimeout(() => console.log(this.x + i), 0); //// ()=> construction doesn't have it's own scope and uses the scope from the caller function, thus 'this' will be accessable here.
         }
     }
 }

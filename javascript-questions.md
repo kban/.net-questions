@@ -128,82 +128,85 @@ var o = {
 
 ## 4. Implement simple Promise-like function on javascript.
 ```
-function Defer() {
-  this.callbacks = [];
-  this.status = 'pending';
-
-  this.pauseDef = null;
+function Defer(func) {
+	this.mainFunc = func;
+  this.callbacks = [];  
+  this.statusObj = {
+  	status: '',
+	 	pauseDef: {}
+  }
 }
 
 Defer.prototype.then = function(callback) {
-  this.callbacks.push(callback);
+	this.callbacks.push(callback);
   return this;
 }
 
-Defer.prototype.resolve = function(val) {
-  this.status = 'executing';
-  
-  let exec = function(res, cur) {
-    if (this.status == 'paused') {
-      this.pauseDef = this.pauseDef || new Defer();
-      if (res instanceof Defer) {
-        return this.pauseDef.then(() => {
-          res.then(cur);
-        });
-      } else {
-        return this.pauseDef.then(() => {
-          cur(res)
-        });
-      }
-    } else {
-      if (res instanceof Defer) {
-        return res.then(cur);
-      } else {
-        return cur(res);
-      }
-    }
-  }
-
-setTimeout(() => { this.callbacks.reduce((res, cur) => {
-    return exec(res, cur);
-  }, val);},1)
- 
-}
-
 Defer.prototype.pause = function() {
-  if (this.status != 'executing') return;
-  this.status = 'paused';
+  this.statusObj.status = 'paused';
+  this.statusObj.pauseDef = new Defer();
 }
 
-Defer.prototype.continue = function() {
- if(!this.pauseDef) return;
- 
- this.status = 'executing';
- 
- this.pauseDef.resolve();
+Defer.prototype.play = function() {
+  this.statusObj.status = '';
+  
+  this.statusObj.pauseDef.resolve();
+}
+
+Defer.prototype.resolve = function() {
+	let execFunction = (prev, now) => {
+  	if(prev instanceof Defer){
+    	prev.statusObj = this.statusObj
+      
+    	return prev.statusObj.status === 'paused' ? 
+      	prev.statusObj.pauseDef.then(() => prev.then(now)) 
+        : prev.then(now);      
+    }
+    
+  	if(this.statusObj.status === 'paused') {
+    	return this.statusObj.pauseDef.then(() => now(prev));
+    }    
+    
+  	return now(prev);
+  }
+  
+	this.callbacks.reduce((prev, now) => {    
+  	return execFunction(prev, now);
+  }, this.mainFunc ? this.mainFunc() : this.callbacks[0]);
 }
 
 
-var def = new Defer();
-def.then((res) => {
-    let d1 = new Defer();
-    setTimeout(() => {
-      d1.resolve(res + 'bbb');
-    }, 12000);
 
-    return d1;
-  })
-  .then((res) => {
-    return res + 'final test';
-  })
-  .then((res) => {
-    console.log('result', res)
-  })
+let f = new Defer(() => {
+  console.log('init', 100)
+	return 100;
+})
 
-def.resolve('aaa')
-def.pause();
+f.then(res => {
+	res += 200;
+  console.log('1', res)
+  	return res;
+})
+.then(res => {
+	let newF = new Defer(() => {
+  	console.log('new 2', res + 100)
+  	return res + 100;
+  });
+  
+  setTimeout(() => { newF.resolve() }, 300)
+  
+  return newF;
+})
+.then(res => {
+	res += 500
+  console.log('3', res)
+  return res;
+})
 
-setTimeout(() => {def.continue()},20000)
+f.resolve();
+f.pause();
+setTimeout(() => { f.play(); }, 10000)
+
 ```
 
 ## 5. Implement array.find() like it never exists in JS. Do not use strings methods.

@@ -149,8 +149,14 @@ Defer.prototype.pause = function() {
 
 Defer.prototype.play = function() {
   this.statusObj.status = '';
-  
-  this.statusObj.pauseDef.resolve();
+  if(this.statusObj.pauseDef)
+  	this.statusObj.pauseDef.resolve();
+}
+
+Defer.prototype.cancel = function() {
+  this.status = 'cancelled';
+  this.statusObj.pauseDef = null;  
+  this.callbacks = [];    
 }
 
 Defer.prototype.resolve = function() {
@@ -158,16 +164,26 @@ Defer.prototype.resolve = function() {
   	if(prev instanceof Defer){
     	prev.statusObj = this.statusObj
       
-    	return prev.statusObj.status === 'paused' ? 
-      	prev.statusObj.pauseDef.then(() => prev.then(now)) 
-        : prev.then(now);      
-    }
-    
-  	if(this.statusObj.status === 'paused') {
-    	return this.statusObj.pauseDef.then(() => now(prev));
+      switch(prev.statusObj.status)
+      {
+      	case 'paused': 
+        	return prev.statusObj.pauseDef.then(() => prev.then(now));
+        case 'cancelled':
+        	return false;
+        
+        default: return prev.then(now); 
+      }
     }    
     
-  	return now(prev);
+    switch(this.statusObj.status)
+      {
+      	case 'paused': 
+        	return this.statusObj.pauseDef ? this.statusObj.pauseDef.then(() => now(prev)) : false;
+        case 'cancelled':
+        	return false;
+        
+        default: return now(prev);
+      }
   }
   
 	this.callbacks.reduce((prev, now) => {    
@@ -205,7 +221,9 @@ f.then(res => {
 
 f.resolve();
 f.pause();
-setTimeout(() => { f.play(); }, 10000)
+setTimeout(() => { f.play(); }, 1000)
+f.cancel();
+
 
 ```
 

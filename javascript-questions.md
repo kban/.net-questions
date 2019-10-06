@@ -245,5 +245,28 @@ exe();
 ```
 
 
+## 9. Implement str cmp function
+
+```
+function strCmp(str1, str2){
+	str1 = '' + str1;
+  str2 = '' + str2;
+  
+  let length = Math.min(str1.length,str2.length)
+  
+  for(let i=0;i<length; i++){
+  	if(str1.charCodeAt(i) > str2.charCodeAt(i))
+    	return 1;
+  	
+    if(str1.charCodeAt(i) === str2.charCodeAt(i))
+    	continue;
+     
+    return -1; 
+  }
+  
+  return str1.length - str2.length;
+}
+```
+
 
 

@@ -246,12 +246,14 @@ Array.prototype.testFind = function(f) {
 ## 8. Implement a function which is executed after some timeout. The timeout should be reseted each time when the fuction is called.
 
 ```
-var exe = function(time);
-exe();
-.../// nothing happens because timout didn't come
-exe();
-...
-///exe result after the timeout = time
+function deb() {
+    const func = arguments[0];
+    const time = arguments[1];
+    return function() {
+        clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => { func(); }, time);
+    }
+}
 ```
 
 

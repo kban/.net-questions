@@ -228,6 +228,16 @@ f.cancel();
 ```
 
 ## 5. Implement array.find() like it never exists in JS. Do not use strings methods.
+```
+Array.prototype.testFind = function(f) {
+	for(x of this) {
+    if(f(x)){
+    	return x;
+    }
+  }
+  return null;
+}
+```
 
 ## 6. Implement factorial function in JS.
 

@@ -283,7 +283,7 @@ function strCmp(str1, str2){
 
 
 ##Change sync to async
-
+```
 function fizzle(number) {
   return number - 50;
 }
@@ -352,7 +352,7 @@ function calculateWithWhileAsync(input, callback){
 
 
 calculateWithWhileAsync(100, (res) => {console.log(res)})
-
+```
 
 
 

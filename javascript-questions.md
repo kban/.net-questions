@@ -282,3 +282,77 @@ function strCmp(str1, str2){
 
 
 
+##Change sync to async
+
+function fizzle(number) {
+  return number - 50;
+}
+
+function buzzle(v1, v2) {
+  return v2 + v2;
+}
+
+function fizzleAsync(number, callback) {
+  callback(number - 50);
+}
+
+function buzzleAsync(v1, v2, callback) {
+  callback(v2 + v2);
+}
+
+function calculateSync(input){
+  let qux = fizzle(input);
+  if(qux < input)
+    qux +=buzzle(input,qux);
+  return qux;
+}
+
+
+function calculateWithWhileSync(input){
+  let qux = fizzle(input);
+  while(qux < input)
+    qux +=buzzle(input,qux);
+  return qux;
+}
+
+//console.log(calculateWithWhileSync(100))
+
+
+function calculateAsync(input, callback){
+	fizzleAsync(input, (qux) => {
+  	 if(qux < input) {
+    		buzzleAsync(input,qux, (res_buz) => {
+        	callback(qux+res_buz);
+        });
+        return;
+     }
+     
+     callback(qux);
+     
+  });
+}
+
+
+function calculateWithWhileAsync(input, callback){
+	fizzleAsync(input, (quxInput) => {
+  	let cb = (qux) => {
+    	if(qux >= input) 
+      {
+      	callback(qux);
+        return;
+      }      
+      
+    		buzzleAsync(input,qux, (res_buz) => { cb(qux+res_buz); });     
+    }
+    
+    cb(quxInput);
+     
+  });
+}
+
+
+calculateWithWhileAsync(100, (res) => {console.log(res)})
+
+
+
+

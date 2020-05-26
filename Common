@@ -1,0 +1,85 @@
+// ======================== 1 what will be in e? =====================
+// const a = {
+//     b: 1,
+//     c: 2
+// }
+// let e = {b: 1};
+
+// const cn = ({b,c}) => e = {c: b};
+
+// cn(a);
+
+// console.log(e);
+//=================== which is wrong? ===========================
+// let a = 2**3;
+// let a = 2*2*2;
+// let a = Math.pow(2,3);
+// let a = 2^3;
+
+// console.log("2**3", a);
+
+// ======================== 3 Arrow function doesn't have it's own this (or only in strict mode)? ===================
+// 'strict mode';
+
+// const check = () => {
+//     console.log(this);
+// }
+
+// check();
+
+// ========================= 4 what will be in console? ===================
+
+// function notify(a,b){
+//     a = a || 5;
+//     a = b && a * 3;
+//     a = a > 10 ? a + 3 : a - 2;
+//     a %= 5;
+//     return a;
+// }
+
+// console.log(notify(3,1));
+
+// ======================== 5 What we don't have in Browser? =============
+// 1. localStorage
+// 2. sessionStorage
+// 3. web SQL 
+// 4. XHR Storage
+
+// ==================== 6 Counter with closure ===========
+// var increment = function (startNumber = 0){
+//     return function (){
+//         return startNumber += 1;
+//     }
+// }
+// let add = increment();
+// console.log(add()); 1
+// console.log(add()); 2
+// console.log(add()); 3
+
+// ======================= 7 What will return ==========================
+// 1. Array
+// 2. Boolean
+// 3. String
+// 4. ..
+//console.log('abc'.match(/[a-z]/));
+
+//======================== 8 What will be i and j =====================
+// let i;
+// let j=1;
+// for (i = 1; i < 5; i ++){
+//     j++;
+// }
+// console.log(i, j);
+
+// ======================= 9 where is false ================================
+// console.log(new Boolean(true) === new Boolean(true));
+// console.log(Boolean(true) === Boolean(true));
+// console.log(null == null);
+
+// ======================= 10 what is the difference between Function Declaration and Function Expression ===============
+
+// = ====================== 11 How browser storage store ? Key - string, value - ??? (also string) ======================
+// 1. String
+// 2. Number
+// 3. Object
+// 4. ..
